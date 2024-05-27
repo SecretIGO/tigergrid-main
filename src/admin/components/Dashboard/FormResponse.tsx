@@ -1,63 +1,82 @@
 import { FC } from "react";
 
-interface ResponseAnswer {
-  question: string;
-  answer: number | string;
-}
-
-interface ResponseSection {
+interface FormQuestion {
   id: number;
-  title: string;
-  answers: ResponseAnswer[];
+  newQuestion: string;
+  newInputType: string;
+  newDropdownChoices: string[];
+  page: number;
+  placeholder?: string;
 }
 
-interface UserInfo {
-  firstName: string;
-  lastName: string;
+interface FormDropdown {
+  id: number;
+  newQuestion: string;
+  newInputType: string;
+  newDropdownChoices: string[];
+  page: number;
+  placeholder?: string;
+}
+
+interface CustomAnswer {
+  id: number;
+  answer: string;
+}
+
+interface FormSection {
+  id: number,
+  title: string,
+  description: string,
+  visible: boolean,
+  sections: FormSection[],
+  dropdowns: FormDropdown[],
+  questions: FormQuestion[],
+  customAnswers: CustomAnswer[]
 }
 
 interface FormResponseProps {
-  formTitle: string;
-  sections: ResponseSection[];
-  users: UserInfo[];
-  onClose: () => void;
+  id: number;
+  title: string;
+  sections: FormSection[];
 }
 
-const FormResponse: FC<FormResponseProps> = ({ formTitle, sections = [], users = [], onClose }) => {
+const FormResponse: FC<FormResponseProps> = ({ id, title, sections = [] }) => {
   return (
     <div className="form-response">
-      <h2 className="form-title text-2xl font-bold mb-4 text-center">{formTitle}</h2>
-      <div className="overflow-auto">
-        <table className="w-full text-md bg-white shadow-md rounded mb-4 border border-gray-300">
-          <thead>
-            <tr>
-              <th className="py-2 px-3 bg-gray-100 border-b border-gray-300 text-center">User</th>
-              {sections.length > 0 && sections[0].answers && sections[0].answers.map((question, index) => (
-                <th key={`q-${index}`} className="py-2 px-3 bg-gray-100 border-b border-gray-300 text-center">
-                  {question.question}
-                </th>
-              ))}
-            </tr>
-          </thead>
-          <tbody>
-            {users.map((user, userIndex) => (
-              <tr key={`user-${userIndex}`} className={userIndex % 2 === 0 ? "bg-gray-50" : ""}>
-                <td className="py-2 px-3 border-b border-gray-300 text-center">{`${user.firstName} ${user.lastName}`}</td>
-                {sections.flatMap(section =>
-                  section.answers && section.answers.map((answer, answerIndex) => (
-                    <td key={`a-${userIndex}-${section.id}-${answerIndex}`} className="py-2 px-3 border-b border-gray-300 text-center">
-                      {answer.answer}
-                    </td>
-                  ))
-                )}
+      <h2 className="form-title text-2xl font-bold mb-4 text-center">{title}</h2>
+      {sections.map((section, sectionIndex) => (
+        <div key={`section-${sectionIndex}`} className="mb-4">
+          <h3 className="section-title text-xl font-bold mb-2">{section.title}</h3>
+          <table className="w-full text-md bg-white shadow-md rounded mb-4 border border-gray-300">
+            <thead>
+              <tr>
+                <th className="py-2 px-3 bg-gray-100 border-b border-gray-300 text-center">Question</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
-      <button className="mt-4 px-4 py-2 bg-blue-500 text-white rounded" onClick={onClose}>
-        Close
-      </button>
+            </thead>
+            <tbody>
+              {section.questions.map((question, questionIndex) => (
+                <tr key={`q-${sectionIndex}-${questionIndex}`} className={questionIndex % 2 === 0 ? "bg-gray-50" : ""}>
+                  <td className="py-2 px-3 border-b border-gray-300 text-center">{question.newQuestion}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+          <table className="w-full text-md bg-white shadow-md rounded mb-4 border border-gray-300">
+            <thead>
+              <tr>
+                <th className="py-2 px-3 bg-gray-100 border-b border-gray-300 text-center">Dropdown</th>
+              </tr>
+            </thead>
+            <tbody>
+              {section.dropdowns.map((question, questionIndex) => (
+                <tr key={`q-${sectionIndex}-${questionIndex}`} className={questionIndex % 2 === 0 ? "bg-gray-50" : ""}>
+                  <td className="py-2 px-3 border-b border-gray-300 text-center">{question.newQuestion}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      ))}
     </div>
   );
 };
