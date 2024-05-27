@@ -1,4 +1,5 @@
-import { FC } from "react";
+import { FC, useEffect, useState } from "react";
+import { useLocation } from "react-router-dom";
 
 interface FormQuestion {
   id: number;
